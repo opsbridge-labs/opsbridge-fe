@@ -5,15 +5,16 @@ import { useDashboard } from "./hooks";
 
 const fallback = {
   metrics: [
-    { key: "audit_search_p95_ms", label: "audit search p95 ms", value: 184, unit: "ms", target: 220 },
-    { key: "rollback_duration_ms", label: "rollback duration ms", value: 92, unit: "%", target: 90 },
-    { key: "state_transition_success_rate", label: "state transition success rate", value: 37, unit: "events", target: 30 },
+    { key: "pending_changes", label: "pending changes", value: 11, unit: "req", target: 12 },
+    { key: "audit_p95_ms", label: "audit p95", value: 142, unit: "ms", target: 180 },
+    { key: "rollback_ready", label: "rollback ready", value: 99, unit: "%", target: 98 }
   ],
   events: [
-    { id: "evt-1", title: "change request state machine", status: "requested", severity: "high", updatedAt: "2026-07-08" },
-    { id: "evt-2", title: "approval console", status: "approved", severity: "medium", updatedAt: "2026-07-08" },
+    { id: "ops-319", title: "Enterprise plan limit change", status: "awaiting approval", severity: "high", updatedAt: "2026-07-08" },
+    { id: "ops-302", title: "Feature flag rollout", status: "approved", severity: "medium", updatedAt: "2026-07-08" },
+    { id: "ops-288", title: "Rollback audit replay", status: "ready", severity: "low", updatedAt: "2026-07-07" }
   ],
-  trend: [{ day: "Mon", value: 12 }, { day: "Tue", value: 18 }, { day: "Wed", value: 33 }, { day: "Thu", value: 27 }, { day: "Fri", value: 41 }],
+  trend: [{ day: "Mon", value: 9 }, { day: "Tue", value: 13 }, { day: "Wed", value: 10 }, { day: "Thu", value: 16 }, { day: "Fri", value: 11 }],
 } as const;
 
 export const Dashboard = () => {
