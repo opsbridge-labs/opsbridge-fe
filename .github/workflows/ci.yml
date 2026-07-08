@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  policy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch name
+        if: github.event_name == 'pull_request'
+        run: |
+          [[ "${{ github.head_ref }}" =~ ^(feat|fix|refactor|chore|docs|test)/[a-z0-9]+(-[a-z0-9]+)*$ ]]
+      - name: Validate PR title
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          [[ "$PR_TITLE" =~ ^(feat|fix|refactor|chore|docs|test)\([a-z0-9-]+\):\ .{1,72}$ ]]
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - run: npm audit --audit-level=critical
