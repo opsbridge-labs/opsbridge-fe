@@ -53,5 +53,5 @@ jobs:
           }
           NODE
       - name: Run Python tests
-        if: ${{ hashFiles('tests/**') != '' }}
+        if: ${{ (hashFiles('pyproject.toml') != '' || hashFiles('requirements.txt') != '') && hashFiles('tests/**') != '' }}
         run: python -m pytest tests
