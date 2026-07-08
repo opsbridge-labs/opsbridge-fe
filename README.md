@@ -1,5 +1,10 @@
 # OpsBridge FE
 
+![React](https://img.shields.io/badge/React-18-61dafb?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)
+![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite)
+![Ops](https://img.shields.io/badge/Workflow-approval-0f766e)
+
 운영 변경 요청, 승인 상태, 감사 로그 흐름을 확인하는 React 대시보드입니다.
 
 ## 기능
