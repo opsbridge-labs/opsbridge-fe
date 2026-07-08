@@ -19,43 +19,15 @@ jobs:
             [[ "$PR_TITLE" =~ ^(feat|fix|refactor|chore|docs|test)\([a-z0-9-]+\):\ .{1,72}$ ]]
           fi
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: pnpm/action-setup@v4
-        if: ${{ hashFiles('package.json') != '' }}
-        with:
-          version: 10
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - uses: actions/setup-python@v5
+      - uses: pnpm/action-setup@v4
         with:
-          python-version: '3.13'
-      - name: Install Node dependencies
-        if: ${{ hashFiles('package.json') != '' }}
-        run: |
-          if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; else pnpm install --no-frozen-lockfile; fi
-      - name: Install Python dependencies
-        if: ${{ hashFiles('pyproject.toml') != '' || hashFiles('requirements.txt') != '' }}
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f pyproject.toml ]; then python -m pip install -e '.[dev]' || python -m pip install -e .; fi
-          if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
-      - name: Run workspace checks
-        run: |
-          if [ -f scripts/self-check.mjs ]; then node scripts/self-check.mjs; fi
-          if [ -f .gitmodules ]; then git submodule status; fi
-      - name: Run Node checks
-        if: ${{ hashFiles('package.json') != '' }}
-        run: |
-          node - <<'NODE'
-          const { readFileSync } = require('node:fs');
-          const { execSync } = require('node:child_process');
-          const scripts = JSON.parse(readFileSync('package.json', 'utf8')).scripts || {};
-          for (const name of ['self-check', 'test', 'typecheck', 'verify']) {
-            if (scripts[name]) execSync('pnpm run ' + name, { stdio: 'inherit' });
-          }
-          NODE
-      - name: Run Python tests
-        if: ${{ (hashFiles('pyproject.toml') != '' || hashFiles('requirements.txt') != '') && hashFiles('tests/**') != '' }}
-        run: python -m pytest tests
+          version: 11.7.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - run: pnpm test
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm run test:e2e
+      - run: pnpm audit --audit-level critical
